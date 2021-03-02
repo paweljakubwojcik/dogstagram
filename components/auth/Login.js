@@ -4,7 +4,7 @@ import { FirebaseContext } from '../../util/context/firebaseContext'
 import { View, TextInput } from 'react-native'
 import { useForm } from '../../util/hooks/useForm'
 import Button from '../general/Button'
-import { Container } from '../commonStyles'
+import { Container } from '../styles/commonStyles'
 
 export default function Login() {
     const { auth } = useContext(FirebaseContext)

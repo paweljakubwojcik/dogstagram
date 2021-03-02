@@ -1,5 +1,10 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Text } from 'react-native'
+
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import rootReducer from './redux/reducers'
+import thunk from 'redux-thunk'
 
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -8,10 +13,13 @@ import { FirebaseContext, FirebaseProvider } from './util/context/firebaseContex
 import Landing from './components/auth/Landing'
 import Register from './components/auth/Register'
 import Login from './components/auth/Login'
-import { useEffect } from 'react'
-import { Container } from './components/commonStyles'
+import Main from './components/Main'
+
+import { Container } from './components/styles/commonStyles'
 
 const Stack = createStackNavigator()
+
+const store = createStore(rootReducer, applyMiddleware(thunk))
 
 export default function App() {
     return (
@@ -35,7 +43,12 @@ const Application = () => {
 
     if (!loaded) return <Loader />
 
-    if (user) return <DashBoard />
+    if (user)
+        return (
+            <Provider store={store}>
+                <Main />
+            </Provider>
+        )
 
     return (
         <NavigationContainer>
@@ -49,14 +62,6 @@ const Application = () => {
                 <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
-    )
-}
-
-const DashBoard = () => {
-    return (
-        <Container>
-            <Text>Dashboard</Text>
-        </Container>
     )
 }
 
