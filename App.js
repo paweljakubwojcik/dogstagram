@@ -14,6 +14,7 @@ import Landing from './components/auth/Landing'
 import Register from './components/auth/Register'
 import Login from './components/auth/Login'
 import Main from './components/Main'
+import Add from './components/main/Add'
 
 import { Container } from './components/styles/commonStyles'
 
@@ -24,7 +25,9 @@ const store = createStore(rootReducer, applyMiddleware(thunk))
 export default function App() {
     return (
         <FirebaseProvider>
-            <Application />
+            <NavigationContainer>
+                <Application />
+            </NavigationContainer>
         </FirebaseProvider>
     )
 }
@@ -46,22 +49,23 @@ const Application = () => {
     if (user)
         return (
             <Provider store={store}>
-                <Main />
+                <Stack.Navigator initialRouteName="Main">
+                    <Stack.Screen
+                        name="Main"
+                        component={Main}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="Add" component={Add} />
+                </Stack.Navigator>
             </Provider>
         )
 
     return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Landing">
-                <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />
-                <Stack.Screen
-                    name="Register"
-                    component={Register}
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            </Stack.Navigator>
-        </NavigationContainer>
+        <Stack.Navigator initialRouteName="Landing" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Landing" component={Landing} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="Login" component={Login} />
+        </Stack.Navigator>
     )
 }
 
