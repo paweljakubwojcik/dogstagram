@@ -9,8 +9,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Profile from './main/Profile'
 import Feed from './main/Feed'
 
-
 const Tab = createBottomTabNavigator()
+
+const Dummy = () => null
 
 export default function Main() {
     const dispatch = useDispatch()
@@ -35,12 +36,12 @@ export default function Main() {
             />
             <Tab.Screen
                 name="Add-dummy"
-                component={() => null}
+                component={Dummy}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="plus-box" color={color} size={26} />
                     ),
-                    tabBarLabel: 'Add'
+                    tabBarLabel: 'Add',
                 }}
                 listeners={({ navigation }) => ({
                     tabPress: (event) => {

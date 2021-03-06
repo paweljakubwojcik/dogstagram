@@ -15,10 +15,10 @@ const ButtonText = styled.Text`
     color: #fff;
 `
 
-export default function Button({ onPress, title, disabled, ...rest }) {
+export default function Button({ onPress, title, disabled, children, ...rest }) {
     return (
         <ButtonContainer onPress={onPress} {...rest}>
-            <ButtonText>{title}</ButtonText>
+            <ButtonText>{children ? children : title}</ButtonText>
         </ButtonContainer>
     )
 }
