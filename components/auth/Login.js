@@ -19,6 +19,7 @@ export default function Login() {
             })
     })
 
+    //TODO: add KeyboardAvoidingView here
     return (
         <Container>
             <TextInput placeholder="email" onChangeText={(email) => addValue({ email })} />
