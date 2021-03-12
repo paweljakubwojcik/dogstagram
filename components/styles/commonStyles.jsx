@@ -6,5 +6,5 @@ export const Container = styled.View`
     background-color: transparent;
     align-items: center;
     justify-content: center;
-   
+    width: 100%;
 `

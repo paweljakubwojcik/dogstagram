@@ -17,16 +17,17 @@ import Main from './components/Main'
 import Add from './components/main/Add'
 
 import { Container } from './components/styles/commonStyles'
+import { forSlide } from './components/styles/animations'
 
 const Stack = createStackNavigator()
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
-export default function App() {
+export default function App({ ...rest }) {
     return (
         <FirebaseProvider>
             <NavigationContainer>
-                <Application />
+                <Application {...rest} />
             </NavigationContainer>
         </FirebaseProvider>
     )
@@ -49,13 +50,26 @@ const Application = () => {
     if (user)
         return (
             <Provider store={store}>
-                <Stack.Navigator initialRouteName="Main">
+                <Stack.Navigator
+                    initialRouteName="Main"
+                    screenOptions={{
+                        gestureEnabled: true,
+                        headerShown: false,
+                    }}
+                >
                     <Stack.Screen
                         name="Main"
                         component={Main}
-                        options={{ headerShown: false }}
+                        options={{ gestureDirection: 'horizontal' }}
                     />
-                    <Stack.Screen name="Add" component={Add} />
+                    <Stack.Screen
+                        name="Add"
+                        component={Add}
+                        options={{
+                            gestureDirection: 'horizontal-inverted',
+                            cardStyleInterpolator: forSlide,
+                        }}
+                    />
                 </Stack.Navigator>
             </Provider>
         )
