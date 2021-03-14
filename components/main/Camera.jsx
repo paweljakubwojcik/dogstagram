@@ -57,16 +57,16 @@ export default function CameraComponent({ navigation }) {
     // getting permission for camera
     useEffect(() => {
         ;(async () => {
-            try {
-                if (Platform.OS !== 'web') {
+            if (Platform.OS !== 'web') {
+                try {
                     const { status } = await Camera.requestPermissionsAsync()
                     setPermissions((permissions) => ({
                         ...permissions,
                         camera: status === 'granted',
                     }))
+                } catch (e) {
+                    throw e
                 }
-            } catch (e) {
-                throw e
             }
         })()
     }, [Platform])
@@ -105,7 +105,13 @@ export default function CameraComponent({ navigation }) {
         <Container>
             <CameraContainer style={styles.fixedRatio}>
                 <StatusBar />
-                <Camera type={type} ratio={'19:9'} style={styles.fixedRatio} ref={getCameraRef} />
+                <Camera
+                    type={type}
+                    ratio={'19:9'}
+                    style={styles.fixedRatio}
+                    ref={getCameraRef}
+                    autoFocus={Camera.Constants.AutoFocus.on}
+                />
             </CameraContainer>
             <Overlay>
                 <BlackOverlay style={{ flexGrow: 3 }}>
@@ -145,6 +151,7 @@ export default function CameraComponent({ navigation }) {
 const styles = StyleSheet.create({
     fixedRatio: {
         aspectRatio: 9 / 19,
+        height,
     },
 })
 
