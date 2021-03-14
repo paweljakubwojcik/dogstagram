@@ -26,50 +26,41 @@ export default function Main({ navigation }) {
     }, [])
 
     return (
-        <GestureRecognizer
-            onSwipeRight={() => {
-                navigation.push('Add')
-            }}
-            style={{
-                flex: 1,
-            }}
-        >
-            <Tab.Navigator>
-                <Tab.Screen
-                    name="Feed"
-                    component={Feed}
-                    options={{
-                        tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name="home" color={color} size={26} />
-                        ),
-                    }}
-                />
-                <Tab.Screen
-                    name="Add-dummy"
-                    component={Dummy}
-                    options={{
-                        tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name="plus-box" color={color} size={26} />
-                        ),
-                        tabBarLabel: 'Add',
-                    }}
-                    listeners={({ navigation }) => ({
-                        tabPress: (event) => {
-                            event.preventDefault()
-                            navigation.navigate('Add')
-                        },
-                    })}
-                />
-                <Tab.Screen
-                    name="Profile"
-                    component={Profile}
-                    options={{
-                        tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name="account-circle" color={color} size={26} />
-                        ),
-                    }}
-                />
-            </Tab.Navigator>
-        </GestureRecognizer>
+        <Tab.Navigator>
+            <Tab.Screen
+                name="Feed"
+                component={Feed}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="home" color={color} size={26} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Add-dummy"
+                component={Dummy}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="plus-box" color={color} size={26} />
+                    ),
+                    tabBarLabel: 'Add',
+                }}
+                listeners={({ navigation }) => ({
+                    tabPress: (event) => {
+                        event.preventDefault()
+                        navigation.navigate('Add')
+                    },
+                })}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={Profile}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="account-circle" color={color} size={26} />
+                    ),
+                }}
+            />
+        </Tab.Navigator>
     )
 }

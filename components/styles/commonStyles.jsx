@@ -8,3 +8,5 @@ export const Container = styled.View`
     justify-content: center;
     width: 100%;
 `
+
+

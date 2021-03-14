@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Text } from 'react-native'
+import { StatusBar, Text } from 'react-native'
 
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
@@ -7,7 +7,7 @@ import rootReducer from './redux/reducers'
 import thunk from 'redux-thunk'
 
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { FirebaseContext, FirebaseProvider } from './util/context/firebaseContext'
 
 import Landing from './components/auth/Landing'
@@ -17,9 +17,9 @@ import Main from './components/Main'
 import Add from './components/main/Add'
 
 import { Container } from './components/styles/commonStyles'
-import { forSlide } from './components/styles/animations'
 
-const Stack = createStackNavigator()
+// using material top navigator for swipe effects
+const SwipeStack = createMaterialTopTabNavigator()
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
@@ -27,6 +27,7 @@ export default function App({ ...rest }) {
     return (
         <FirebaseProvider>
             <NavigationContainer>
+                <StatusBar />
                 <Application {...rest} />
             </NavigationContainer>
         </FirebaseProvider>
@@ -50,27 +51,32 @@ const Application = () => {
     if (user)
         return (
             <Provider store={store}>
-                <Stack.Navigator
+                <SwipeStack.Navigator
                     initialRouteName="Main"
                     screenOptions={{
                         gestureEnabled: true,
                         headerShown: false,
                     }}
+                    tabBar={() => null}
+                    timingConfig={{
+                        duration: 200,
+                    }}
+                    lazy={true}
                 >
-                    <Stack.Screen
-                        name="Main"
-                        component={Main}
-                        options={{ gestureDirection: 'horizontal' }}
-                    />
-                    <Stack.Screen
+                    <SwipeStack.Screen
                         name="Add"
                         component={Add}
-                        options={{
+                        /*  options={{
                             gestureDirection: 'horizontal-inverted',
                             cardStyleInterpolator: forSlide,
-                        }}
+                        }} */
                     />
-                </Stack.Navigator>
+                    <SwipeStack.Screen
+                        name="Main"
+                        component={Main}
+                        /* options={{ gestureDirection: 'horizontal' }} */
+                    />
+                </SwipeStack.Navigator>
             </Provider>
         )
 
