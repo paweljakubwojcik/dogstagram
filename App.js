@@ -8,18 +8,21 @@ import thunk from 'redux-thunk'
 
 import { NavigationContainer } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import { createStackNavigator } from '@react-navigation/stack'
 import { FirebaseContext, FirebaseProvider } from './util/context/firebaseContext'
 
 import Landing from './components/auth/Landing'
 import Register from './components/auth/Register'
 import Login from './components/auth/Login'
 import Main from './components/Main'
-import Add from './components/main/Add'
 
 import { Container } from './components/styles/commonStyles'
+import CameraComponent from './components/main/Camera'
+import ImagePreview from './components/main/ImagePreview'
 
 // using material top navigator for swipe effects
 const SwipeStack = createMaterialTopTabNavigator()
+const Stack = createStackNavigator()
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
@@ -51,32 +54,31 @@ const Application = () => {
     if (user)
         return (
             <Provider store={store}>
-                <SwipeStack.Navigator
-                    initialRouteName="Main"
-                    screenOptions={{
-                        gestureEnabled: true,
-                        headerShown: false,
-                    }}
-                    tabBar={() => null}
-                    timingConfig={{
-                        duration: 200,
-                    }}
-                    lazy={true}
+                <Stack.Navigator
+                    initialRouteName="Dashboard"
+                    screenOptions={{ headerShown: false }}
                 >
-                    <SwipeStack.Screen
-                        name="Add"
-                        component={Add}
-                        /*  options={{
-                            gestureDirection: 'horizontal-inverted',
-                            cardStyleInterpolator: forSlide,
-                        }} */
-                    />
-                    <SwipeStack.Screen
-                        name="Main"
-                        component={Main}
-                        /* options={{ gestureDirection: 'horizontal' }} */
-                    />
-                </SwipeStack.Navigator>
+                    <Stack.Screen name="Dashboard">
+                        {() => (
+                            <SwipeStack.Navigator
+                                initialRouteName="Main"
+                                screenOptions={{
+                                    gestureEnabled: true,
+                                    headerShown: false,
+                                }}
+                                tabBar={() => null}
+                                timingConfig={{
+                                    duration: 600,
+                                }}
+                                lazy={true}
+                            >
+                                <SwipeStack.Screen name="Camera" component={CameraComponent} />
+                                <SwipeStack.Screen name="Main" component={Main} />
+                            </SwipeStack.Navigator>
+                        )}
+                    </Stack.Screen>
+                    <Stack.Screen name="ImagePreview" component={ImagePreview} />
+                </Stack.Navigator>
             </Provider>
         )
 

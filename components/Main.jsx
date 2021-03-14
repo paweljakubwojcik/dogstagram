@@ -25,6 +25,7 @@ export default function Main({ navigation }) {
         fetchUser(dispatch)
     }, [])
 
+    //TODO: add custom navigation tab
     return (
         <Tab.Navigator>
             <Tab.Screen
@@ -37,7 +38,7 @@ export default function Main({ navigation }) {
                 }}
             />
             <Tab.Screen
-                name="Add-dummy"
+                name="Dummy"
                 component={Dummy}
                 options={{
                     tabBarIcon: ({ color, size }) => (
@@ -48,7 +49,7 @@ export default function Main({ navigation }) {
                 listeners={({ navigation }) => ({
                     tabPress: (event) => {
                         event.preventDefault()
-                        navigation.navigate('Add')
+                        navigation.navigate('Camera')
                     },
                 })}
             />
