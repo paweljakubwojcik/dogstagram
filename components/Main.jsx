@@ -8,8 +8,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Profile from './main/Profile'
 import Feed from './main/Feed'
-import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures'
-import { Container } from './styles/commonStyles'
 
 const Tab = createBottomTabNavigator()
 

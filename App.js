@@ -1,4 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
+import firebase from 'firebase/app'
+import 'firebase/firebase-auth'
 import { StatusBar, Text } from 'react-native'
 
 import { Provider } from 'react-redux'
@@ -9,7 +11,7 @@ import thunk from 'redux-thunk'
 import { NavigationContainer } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { createStackNavigator } from '@react-navigation/stack'
-import { FirebaseContext, FirebaseProvider } from './util/context/firebaseContext'
+import { FirebaseProvider } from './util/context/firebaseContext'
 
 import Landing from './components/auth/Landing'
 import Register from './components/auth/Register'
@@ -38,12 +40,11 @@ export default function App({ ...rest }) {
 }
 
 const Application = () => {
-    const { auth } = useContext(FirebaseContext)
     const [user, setUser] = useState(null)
     const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
-        auth.onAuthStateChanged((user) => {
+        firebase.auth().onAuthStateChanged((user) => {
             setUser(user)
             setLoaded(true)
         })
