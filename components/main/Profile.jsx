@@ -17,8 +17,6 @@ export default function Profile() {
         fetchUserPosts(dispatch)
     }, [])
 
-    console.log({ posts, currentUser })
-
     return (
         <>
             <UserInfoContainer>

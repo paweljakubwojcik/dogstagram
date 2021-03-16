@@ -6,8 +6,10 @@ import { fetchUser } from '../redux/actions/index'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Profile from './main/Profile'
 import Feed from './main/Feed'
+import Search from './main/Search'
 
 const Tab = createBottomTabNavigator()
 
@@ -32,6 +34,15 @@ export default function Main({ navigation }) {
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="home" color={color} size={26} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Search"
+                component={Search}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="magnify" color={color} size={26} />
                     ),
                 }}
             />
