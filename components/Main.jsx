@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchUser } from '../redux/actions/index'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createStackNavigator } from '@react-navigation/stack'
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Profile from './main/Profile'
@@ -10,8 +11,10 @@ import Feed from './main/Feed'
 import Search from './main/Search'
 import CustomTabBar from './general/CustomTabBar'
 import AnimationContainer from './general/AnimatedContainer'
+import { forSlide } from './styles/animations'
 
 const Tab = createBottomTabNavigator()
+const Stack = createStackNavigator()
 
 const Dummy = () => null
 
@@ -25,7 +28,6 @@ export default function Main({ navigation }) {
         fetchUser(dispatch)
     }, [])
 
-    //TODO: add custom navigation tab
     return (
         <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
             <Tab.Screen
@@ -39,13 +41,24 @@ export default function Main({ navigation }) {
             />
             <Tab.Screen
                 name="Search"
-                component={Search}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="magnify" color={color} size={30} />
                     ),
                 }}
-            />
+            >
+                {() => (
+                    <Stack.Navigator initialRouteName="Search">
+                        {/* //TODO: extract this somehow to every component ;) */}
+                        <Stack.Screen component={Search} name="Search" />
+                        <Stack.Screen
+                            component={Profile}
+                            name="Profile"
+                            options={{ cardStyleInterpolator: forSlide }}
+                        />
+                    </Stack.Navigator>
+                )}
+            </Tab.Screen>
             <Tab.Screen
                 name="Dummy"
                 component={Dummy}
@@ -71,7 +84,7 @@ export default function Main({ navigation }) {
                     ),
                 }}
             />
-            <Tab.Screen
+            {/*  <Tab.Screen
                 name="Profile"
                 options={{
                     hidden: true,
@@ -82,7 +95,7 @@ export default function Main({ navigation }) {
                         <Profile {...props} />
                     </AnimationContainer>
                 )}
-            </Tab.Screen>
+            </Tab.Screen> */}
         </Tab.Navigator>
     )
 }

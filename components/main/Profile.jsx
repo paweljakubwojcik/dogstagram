@@ -17,7 +17,7 @@ export default function Profile({ route: { params } }) {
     useEffect(() => {
         const uid = params ? params.uid : firebase.auth().currentUser.uid
 
-        if (user.uid !== uid) {
+        if (!user || user?.uid !== uid) {
             setUser(null)
             setPosts([])
 
