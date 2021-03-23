@@ -14,6 +14,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
     }
 
     useEffect(() => {
+        // if we want screen to be hidden , we dont update icon when navigating to it
         if (!descriptors[state.routes[state.index].key].options.hidden) setFocused(state.index)
     }, [state.index])
 
@@ -68,6 +69,7 @@ const CustomTabNavigator = styled.View`
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    /* box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px; */
 `
 
 const CustomTabButton = styled.TouchableOpacity`

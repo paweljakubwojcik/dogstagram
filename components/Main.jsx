@@ -9,6 +9,7 @@ import Profile from './main/Profile'
 import Feed from './main/Feed'
 import Search from './main/Search'
 import CustomTabBar from './general/CustomTabBar'
+import AnimationContainer from './general/AnimatedContainer'
 
 const Tab = createBottomTabNavigator()
 
@@ -72,11 +73,16 @@ export default function Main({ navigation }) {
             />
             <Tab.Screen
                 name="Profile"
-                component={Profile}
                 options={{
                     hidden: true,
                 }}
-            />
+            >
+                {({ navigation }) => (
+                    <AnimationContainer navigation={navigation}>
+                        <Profile />
+                    </AnimationContainer>
+                )}
+            </Tab.Screen>
         </Tab.Navigator>
     )
 }
