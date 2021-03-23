@@ -77,9 +77,9 @@ export default function Main({ navigation }) {
                     hidden: true,
                 }}
             >
-                {({ navigation }) => (
-                    <AnimationContainer navigation={navigation}>
-                        <Profile />
+                {(props) => (
+                    <AnimationContainer {...props}>
+                        <Profile {...props} />
                     </AnimationContainer>
                 )}
             </Tab.Screen>

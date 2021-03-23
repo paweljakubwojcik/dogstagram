@@ -34,7 +34,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
                         canPreventDefault: true,
                     })
 
-                    if (!isFocused && !event.defaultPrevented) {
+                    if (!event.defaultPrevented) {
                         navigation.navigate(route.name)
                     }
                 }
