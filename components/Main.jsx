@@ -18,6 +18,35 @@ const Stack = createStackNavigator()
 
 const Dummy = () => null
 
+const routes = [
+    {
+        name: 'Feed',
+        Icon: (props) => <MaterialCommunityIcons name="home" {...props} />,
+        component: Feed,
+    },
+    {
+        name: 'Search',
+        Icon: (props) => <MaterialCommunityIcons name="magnify" {...props} />,
+        component: Search,
+    },
+    {
+        name: 'Dummy',
+        Icon: (props) => <MaterialCommunityIcons name="plus-box" {...props} />,
+        component: Dummy,
+        listeners: ({ navigation }) => ({
+            tabPress: (event) => {
+                event.preventDefault()
+                navigation.navigate('Camera')
+            },
+        }),
+    },
+    {
+        name: 'UserProfile',
+        Icon: (props) => <MaterialCommunityIcons name="account-circle" {...props} />,
+        component: Profile,
+    },
+]
+
 export default function Main({ navigation }) {
     const dispatch = useDispatch()
     const { currentUser } = useSelector((store) => ({
@@ -30,72 +59,39 @@ export default function Main({ navigation }) {
 
     return (
         <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
-            <Tab.Screen
-                name="Feed"
-                component={Feed}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="home" color={color} size={30} />
-                    ),
-                }}
-            />
-            <Tab.Screen
-                name="Search"
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="magnify" color={color} size={30} />
-                    ),
-                }}
-            >
-                {() => (
-                    <Stack.Navigator initialRouteName="Search">
-                        {/* //TODO: extract this somehow to every component ;) */}
-                        <Stack.Screen component={Search} name="Search" />
-                        <Stack.Screen
-                            component={Profile}
-                            name="Profile"
-                            options={{ cardStyleInterpolator: forSlide }}
-                        />
-                    </Stack.Navigator>
-                )}
-            </Tab.Screen>
-            <Tab.Screen
-                name="Dummy"
-                component={Dummy}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="plus-box" color={color} size={30} />
-                    ),
-                    tabBarLabel: 'Add',
-                }}
-                listeners={({ navigation }) => ({
-                    tabPress: (event) => {
-                        event.preventDefault()
-                        navigation.navigate('Camera')
-                    },
-                })}
-            />
-            <Tab.Screen
-                name="UserProfile"
-                component={Profile}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="account-circle" color={color} size={30} />
-                    ),
-                }}
-            />
-            {/*  <Tab.Screen
-                name="Profile"
-                options={{
-                    hidden: true,
-                }}
-            >
-                {(props) => (
-                    <AnimationContainer {...props}>
-                        <Profile {...props} />
-                    </AnimationContainer>
-                )}
-            </Tab.Screen> */}
+            {routes.map(({ name, component, listeners, Icon }, i) => (
+                <Tab.Screen
+                    key={i}
+                    name={name}
+                    options={{
+                        tabBarIcon: ({ color, size }) => <Icon color={color} size={30} />,
+                    }}
+                    listeners={listeners}
+                >
+                    {(props) => <InnerStack {...props} component={component} name={name} />}
+                </Tab.Screen>
+            ))}
         </Tab.Navigator>
+    )
+}
+
+const InnerStack = ({ component, name, children, ...rest }) => {
+    const Component = component ? component : children
+    return (
+        <Stack.Navigator initialRouteName={name}>
+            <Stack.Screen
+                name={name}
+                options={{
+                    headerShown: false,
+                }}
+            >
+                {(props) => <Component {...props} {...rest} />}
+            </Stack.Screen>
+            <Stack.Screen
+                component={Profile}
+                name="Profile"
+                options={{ cardStyleInterpolator: forSlide }}
+            />
+        </Stack.Navigator>
     )
 }

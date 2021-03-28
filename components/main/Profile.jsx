@@ -12,7 +12,7 @@ export default function Profile({ route: { params } }) {
     const [posts, setPosts] = useState([])
     const [user, setUser] = useState(null)
 
-    console.log(user)
+    
 
     useEffect(() => {
         const uid = params ? params.uid : firebase.auth().currentUser.uid

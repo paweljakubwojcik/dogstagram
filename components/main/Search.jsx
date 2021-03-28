@@ -38,7 +38,11 @@ export default function Search({ navigation }) {
                 horizontal={false}
                 data={users}
                 renderItem={({ item }) => (
-                    <UserLink onPress={() => navigation.navigate('Profile', { uid: item.id })}>
+                    <UserLink
+                        onPress={() =>
+                            navigation.navigate('Profile', { uid: item.id, name: item.name })
+                        }
+                    >
                         <Text>{item.name}</Text>
                     </UserLink>
                 )}
