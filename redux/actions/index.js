@@ -1,7 +1,11 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firebase-firestore'
-import { USER_POSTS_STATE_CHANGE, USER_STATE_CHANGE } from '../constants'
+import {
+    USER_POSTS_STATE_CHANGE,
+    USER_STATE_CHANGE,
+    USER_FOLLOWING_STATE_CHANGE,
+} from '../constants'
 
 export function fetchUser(dispatch) {
     firebase
@@ -17,6 +21,24 @@ export function fetchUser(dispatch) {
                 console.log('does not exist')
             }
         })
+
+    firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('following')
+        .onSnapshot(
+            (snapshot) => {
+                const following = snapshot.docs.map((doc) => {
+                    const id = doc.id
+                    return id
+                })
+                dispatch({ type: USER_FOLLOWING_STATE_CHANGE, data: following })
+            },
+            (error) => {
+                throw error
+            }
+        )
 }
 
 export function fetchUserPosts(dispatch) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, Image, FlatList } from 'react-native'
 import styled from 'styled-components/native'
 import { Container } from '../styles/commonStyles'
+import Button from '../general/Button'
 
 import firebase from 'firebase'
 
@@ -9,10 +10,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchUserPosts } from '../../redux/actions/index'
 
 export default function Profile({ route: { params } }) {
+    
+    const { isFollowing } = useSelector((store) => ({
+        isFollowing: params ? store.userState.following.includes(params?.uid) : false,
+    }))
+
     const [posts, setPosts] = useState([])
     const [user, setUser] = useState(null)
-
-    
+    /* const [isFollowing, setFollowing] = useState(false) */
+    const isCurrentUser = params?.uid === firebase.auth().currentUser.uid || !params
 
     useEffect(() => {
         const uid = params ? params.uid : firebase.auth().currentUser.uid
@@ -53,10 +59,43 @@ export default function Profile({ route: { params } }) {
         }
     }, [params])
 
+    const onFollow = () => {
+        firebase
+            .firestore()
+            .collection('users')
+            .doc(firebase.auth().currentUser.uid)
+            .collection('following')
+            .doc(user.uid)
+            .set({})
+    }
+
+    const onUnfollow = () => {
+        firebase
+            .firestore()
+            .collection('users')
+            .doc(firebase.auth().currentUser.uid)
+            .collection('following')
+            .doc(user.uid)
+            .delete()
+    }
+
+    if (!user)
+        return (
+            <View>
+                <Text>Loading</Text>
+            </View>
+        )
+
     return (
         <>
             <UserInfoContainer>
                 <Text>{user?.name}</Text>
+                {!isCurrentUser &&
+                    (isFollowing ? (
+                        <Button onPress={onUnfollow}>Following</Button>
+                    ) : (
+                        <Button onPress={onFollow}>Follow</Button>
+                    ))}
             </UserInfoContainer>
             <Container>
                 <FlatList
