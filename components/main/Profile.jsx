@@ -79,6 +79,8 @@ export default function Profile({ route: { params } }) {
             .delete()
     }
 
+    
+
     if (!user)
         return (
             <View>
