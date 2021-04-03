@@ -20,11 +20,12 @@ export const getUserPosts = async (uid) => {
         .collection('posts')
         .orderBy('creation', 'desc')
         .get()
+        
     if (snapshot.exist)
         return snapshot.docs.map((doc) => {
             const data = doc.data()
             const id = doc.id
-            return { ...data, id }
+            return { ...data, id, owner: uid }
         })
     else console.log('no posts')
 }

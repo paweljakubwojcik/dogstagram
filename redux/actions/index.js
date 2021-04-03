@@ -7,6 +7,7 @@ import {
     USER_FOLLOWING_STATE_CHANGE,
     USERS_DATA_STATE_CHANGE,
     USERS_POSTS_STATE_CHANGE,
+    FETCH_POSTS,
 } from '../constants'
 
 export function fetchUser(dispatch) {
@@ -31,7 +32,7 @@ export function fetchUser(dispatch) {
     firebase
         .firestore()
         .collection('users')
-        .doc(firebase.auth().currentUser.uid)
+        .doc(uid)
         .collection('following')
         .onSnapshot(
             (snapshot) => {
@@ -47,7 +48,31 @@ export function fetchUser(dispatch) {
         )
 }
 
-export function fetchUserPosts(dispatch) {
+export function fetchPostsByUserId(uid) {
+    return (dispatch, getState) => {
+        ;(async () => {
+            const snapshot = await firebase
+                .firestore()
+                .collection('post')
+                .doc(uid)
+                .collection('posts')
+                .orderBy('creation', 'asc')
+                .get()
+
+            const posts = snapshot.docs.map((doc) => {
+                const data = doc.data()
+                const id = doc.id
+                return { id, ...data, owner: uid }
+            })
+
+            console.log(posts)
+
+            dispatch({ type: FETCH_POSTS, payload: posts })
+        })()
+    }
+}
+
+/* export function fetchUserPosts(dispatch) {
     firebase
         .firestore()
         .collection('post')
@@ -64,7 +89,7 @@ export function fetchUserPosts(dispatch) {
             dispatch({ type: USER_POSTS_STATE_CHANGE, posts })
         })
         .catch((error) => console.error(error))
-}
+} */
 
 export function fetchUsersData(uid) {
     return (dispatch, getState) => {
