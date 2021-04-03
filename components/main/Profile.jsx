@@ -4,82 +4,54 @@ import styled from 'styled-components/native'
 import { Container } from '../styles/commonStyles'
 import Button from '../general/Button'
 
-import firebase from 'firebase'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchUserPosts } from '../../redux/actions/index'
+import {
+    followUser,
+    getUserById,
+    getUserPosts,
+    logout,
+    unFollowUser,
+} from '../../services/firebase'
 
 export default function Profile({ route: { params } }) {
-    
-    const { isFollowing } = useSelector((store) => ({
+    const { isFollowing, currentUser } = useSelector((store) => ({
         isFollowing: params ? store.userState.following.includes(params?.uid) : false,
+        currentUser: store.userState.currentUser,
     }))
 
     const [posts, setPosts] = useState([])
     const [user, setUser] = useState(null)
-    /* const [isFollowing, setFollowing] = useState(false) */
-    const isCurrentUser = params?.uid === firebase.auth().currentUser.uid || !params
+    const isCurrentUser = params?.uid === currentUser.uid || !params
 
     useEffect(() => {
-        const uid = params ? params.uid : firebase.auth().currentUser.uid
+        const uid = params ? params.uid : currentUser.uid
 
         if (!user || user?.uid !== uid) {
             setUser(null)
             setPosts([])
+            ;(async () => {
+                const user = await getUserById(uid)
+                setUser(user)
 
-            firebase
-                .firestore()
-                .collection('users')
-                .doc(uid)
-                .get()
-                .then((snapshot) => {
-                    if (snapshot.exists) {
-                        setUser({ ...snapshot.data(), uid })
-                    } else {
-                        console.log('does not exist')
-                    }
-                })
-
-            firebase
-                .firestore()
-                .collection('post')
-                .doc(uid)
-                .collection('posts')
-                .orderBy('creation', 'desc')
-                .get()
-                .then((snapshot) => {
-                    const posts = snapshot.docs.map((doc) => {
-                        const data = doc.data()
-                        const id = doc.id
-                        return { ...data, id }
-                    })
-                    setPosts(posts)
-                })
-                .catch((error) => console.error(error))
+                const posts = await getUserPosts(uid)
+                setPosts(posts)
+            })()
         }
     }, [params])
 
     const onFollow = () => {
-        firebase
-            .firestore()
-            .collection('users')
-            .doc(firebase.auth().currentUser.uid)
-            .collection('following')
-            .doc(user.uid)
-            .set({})
+        followUser(user.uid)
     }
 
     const onUnfollow = () => {
-        firebase
-            .firestore()
-            .collection('users')
-            .doc(firebase.auth().currentUser.uid)
-            .collection('following')
-            .doc(user.uid)
-            .delete()
+        unFollowUser(user.uid)
     }
 
-    
+    const onLogout = () => {
+        logout()
+    }
 
     if (!user)
         return (
@@ -92,12 +64,15 @@ export default function Profile({ route: { params } }) {
         <>
             <UserInfoContainer>
                 <Text>{user?.name}</Text>
-                {!isCurrentUser &&
-                    (isFollowing ? (
+                {!isCurrentUser ? (
+                    isFollowing ? (
                         <Button onPress={onUnfollow}>Following</Button>
                     ) : (
                         <Button onPress={onFollow}>Follow</Button>
-                    ))}
+                    )
+                ) : (
+                    <Button onPress={onLogout}>logout</Button>
+                )}
             </UserInfoContainer>
             <Container>
                 <FlatList

@@ -10,17 +10,18 @@ import {
 } from '../constants'
 
 export function fetchUser(dispatch) {
+    const uid = firebase.auth().currentUser.uid
+
     firebase
         .firestore()
         .collection('users')
-        .doc(firebase.auth().currentUser.uid)
+        .doc(uid)
         .get()
         .then((snapshot) => {
             if (snapshot.exists) {
-                /*  console.log(snapshot.data()) */
                 dispatch({
                     type: USER_STATE_CHANGE,
-                    currentUser: { ...snapshot.data(), uid: snapshot.uid },
+                    currentUser: { ...snapshot.data(), uid },
                 })
             } else {
                 console.log('does not exist')
@@ -100,7 +101,7 @@ export function fetchUsersFollowingPosts(uid) {
             .orderBy('creation', 'asc')
             .get()
             .then((snapshot) => {
-                const uid = snapshot.query.EP.path.segments[1]
+                // const uid = snapshot.query.EP.path.segments[1]
                 const user = getState().usersState.users.find((el) => el.uid === uid)
 
                 let posts = snapshot.docs.map((doc) => {
