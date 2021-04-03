@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Profile from './main/Profile'
+import UserProfile from './main/UserProfile'
 import Feed from './main/Feed'
 import Search from './main/Search'
 import CustomTabBar from './general/CustomTabBar'
@@ -43,11 +44,11 @@ const routes = [
     {
         name: 'UserProfile',
         Icon: (props) => <MaterialCommunityIcons name="account-circle" {...props} />,
-        component: Profile,
+        component: UserProfile,
     },
 ]
 
-export default function Main({ navigation }) {
+export default function Main() {
     const dispatch = useDispatch()
     const { currentUser } = useSelector((store) => ({
         currentUser: store.userState.currentUser,
@@ -88,10 +89,11 @@ const InnerStack = ({ component, name, children, ...rest }) => {
                 {(props) => <Component {...props} {...rest} />}
             </Stack.Screen>
             <Stack.Screen
-                component={Profile}
                 name="Profile"
                 options={{ cardStyleInterpolator: forSlide }}
-            />
+            >
+                {({ route: { params: { uid } = {} } = {} }) => <Profile uid={uid} />}
+            </Stack.Screen>
         </Stack.Navigator>
     )
 }

@@ -4,9 +4,8 @@ import styled from 'styled-components/native'
 import { Container } from '../styles/commonStyles'
 import Button from '../general/Button'
 
-
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchUserPosts } from '../../redux/actions/index'
+import { fetchPostsByUserId, fetchUserPosts } from '../../redux/actions/index'
 import {
     followUser,
     getUserById,
@@ -15,31 +14,26 @@ import {
     unFollowUser,
 } from '../../services/firebase'
 
-export default function Profile({ route: { params } }) {
-    const { isFollowing, currentUser } = useSelector((store) => ({
-        isFollowing: params ? store.userState.following.includes(params?.uid) : false,
-        currentUser: store.userState.currentUser,
+export default function Profile({ uid }) {
+    const dispatch = useDispatch()
+
+    const { isFollowing, isCurrentUser, posts } = useSelector((store) => ({
+        isFollowing: store.userState.following.includes(uid),
+        isCurrentUser: uid === store.userState.currentUser.uid,
+        posts: store.posts.filter((post) => post.owner === uid),
     }))
 
-    const [posts, setPosts] = useState([])
     const [user, setUser] = useState(null)
-    const isCurrentUser = params?.uid === currentUser.uid || !params
 
     useEffect(() => {
-        const uid = params ? params.uid : currentUser.uid
-
         if (!user || user?.uid !== uid) {
-            setUser(null)
-            setPosts([])
             ;(async () => {
                 const user = await getUserById(uid)
                 setUser(user)
-
-                const posts = await getUserPosts(uid)
-                setPosts(posts)
             })()
         }
-    }, [params])
+        dispatch(fetchPostsByUserId(uid))
+    }, [uid])
 
     const onFollow = () => {
         followUser(user.uid)
@@ -52,6 +46,8 @@ export default function Profile({ route: { params } }) {
     const onLogout = () => {
         logout()
     }
+
+    console.log({ user, posts })
 
     if (!user)
         return (
@@ -84,6 +80,7 @@ export default function Profile({ route: { params } }) {
                     data={posts}
                     renderItem={({ item }) => (
                         <ImageTile>
+                            <Text>{item.URL}</Text>
                             <Image
                                 style={{
                                     flex: 1,
