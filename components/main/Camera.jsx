@@ -94,6 +94,21 @@ export default function CameraComponent({ navigation }) {
         }
     }
 
+    if(Platform.OS === 'web'){
+        return (
+            <Container>
+                <Text>{"You can't acces camera through web browser "}</Text>
+                <Button
+                    onPress={() => navigation.jumpTo('Main')}
+                    transparent
+                    style={{ marginLeft: 'auto' }}
+                >
+                    <MaterialIcons name="close" color={'#fff'} size={40} />
+                </Button>
+            </Container>
+        )
+    }
+
     if (permissions.camera === null) {
         return <View />
     }
