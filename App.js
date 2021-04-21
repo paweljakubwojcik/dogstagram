@@ -40,19 +40,19 @@ export default function App({ ...rest }) {
 }
 
 const Application = () => {
-    const [user, setUser] = useState(null)
+    const [userLoggedIn, setUserLoggedIn] = useState(null)
     const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((user) => {
-            setUser(user)
+            setUserLoggedIn(!!user)
             setLoaded(true)
         })
     }, [])
 
     if (!loaded) return <Loader />
 
-    if (user)
+    if (userLoggedIn)
         return (
             <Provider store={store}>
                 <Stack.Navigator

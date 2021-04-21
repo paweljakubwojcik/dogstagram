@@ -1,27 +1,24 @@
-import { FETCH_POSTS } from '../constants'
+import { FETCH_POSTS, INCREMENT_INDEX } from '../constants'
+import reduceArrayIntoObject from '../../util/methods/reduceArrayIntoObject'
 
-const initialState = []
+const initialState = {
+    posts: [],
+    daysBackIndex: 1,
+}
 
-export const posts = (state = initialState, action) => {
+export const postState = (state = initialState, action) => {
     switch (action.type) {
         case FETCH_POSTS:
-            const existing = reduceArrayIntoObject(state)
+            const existing = reduceArrayIntoObject(state.posts)
             const incoming = reduceArrayIntoObject(action.payload)
             const merged = {
                 ...existing,
                 ...incoming,
             }
-            return Object.values(merged)
+            return { ...state, posts: Object.values(merged) }
+        case INCREMENT_INDEX:
+            return { ...state, daysBackIndex: state.daysBackIndex + 1 }
         default:
             return state
     }
-}
-
-function reduceArrayIntoObject(array) {
-    return array.reduce((objectFromArray, value) => {
-        return {
-            ...objectFromArray,
-            [value.id]: value,
-        }
-    }, {})
 }

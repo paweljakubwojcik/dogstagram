@@ -1,12 +1,10 @@
 import { combineReducers } from 'redux'
-import { user } from './user'
 import { users } from './users'
-import { posts } from './posts'
+import { postState } from './posts'
 
 const Reducers = combineReducers({
-    userState: user,
     usersState: users,
-    posts,
+    postState,
 })
 
 export default Reducers

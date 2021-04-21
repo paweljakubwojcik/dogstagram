@@ -1,141 +1,79 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/firebase-firestore'
 import {
-    USER_POSTS_STATE_CHANGE,
-    USER_STATE_CHANGE,
-    USER_FOLLOWING_STATE_CHANGE,
+    getCurrentUser,
+    getUserById,
+    getUserPosts,
+    listenToFollowingUpdates,
+} from '../../services/firebase'
+import {
+    CURRENT_USER_STATE_CHANGE,
     USERS_DATA_STATE_CHANGE,
-    USERS_POSTS_STATE_CHANGE,
     FETCH_POSTS,
+    USER_FOLLOWING_STATE_CHANGE,
 } from '../constants'
 
-export function fetchUser(dispatch) {
-    const uid = firebase.auth().currentUser.uid
-
-    firebase
-        .firestore()
-        .collection('users')
-        .doc(uid)
-        .get()
-        .then((snapshot) => {
-            if (snapshot.exists) {
-                dispatch({
-                    type: USER_STATE_CHANGE,
-                    currentUser: { ...snapshot.data(), uid },
+export function fetchCurrentUser() {
+    return (dispatch, getState) => {
+        ;(async () => {
+            try {
+                const user = await getCurrentUser()
+                dispatch({ type: CURRENT_USER_STATE_CHANGE, payload: user })
+                listenToFollowingUpdates(user.uid, (following) => {
+                    dispatch({
+                        type: USER_FOLLOWING_STATE_CHANGE,
+                        payload: { uid: user.uid, following },
+                    })
                 })
-            } else {
-                console.log('does not exist')
+            } catch (error) {
+                console.log(error)
             }
-        })
-
-    firebase
-        .firestore()
-        .collection('users')
-        .doc(uid)
-        .collection('following')
-        .onSnapshot(
-            (snapshot) => {
-                const following = snapshot.docs.map((doc) => {
-                    const id = doc.id
-                    return id
-                })
-                dispatch({ type: USER_FOLLOWING_STATE_CHANGE, data: following })
-            },
-            (error) => {
-                throw error
-            }
-        )
+        })()
+    }
 }
 
 export function fetchPostsByUserId(uid) {
     return (dispatch, getState) => {
         ;(async () => {
-            const snapshot = await firebase
-                .firestore()
-                .collection('post')
-                .doc(uid)
-                .collection('posts')
-                .orderBy('creation', 'asc')
-                .get()
-
-            const posts = snapshot.docs.map((doc) => {
-                const data = doc.data()
-                const id = doc.id
-                return { id, ...data, owner: uid }
-            })
-
-            console.log(posts)
-
-            dispatch({ type: FETCH_POSTS, payload: posts })
+            try {
+                const posts = await getUserPosts(uid)
+                dispatch({ type: FETCH_POSTS, payload: posts })
+            } catch (error) {
+                console.log(error)
+            }
         })()
     }
 }
 
-/* export function fetchUserPosts(dispatch) {
-    firebase
-        .firestore()
-        .collection('post')
-        .doc(firebase.auth().currentUser.uid)
-        .collection('posts')
-        .orderBy('creation', 'desc')
-        .get()
-        .then((snapshot) => {
-            const posts = snapshot.docs.map((doc) => {
-                const data = doc.data()
-                const id = doc.id
-                return { ...data, id }
-            })
-            dispatch({ type: USER_POSTS_STATE_CHANGE, posts })
+/**
+ *
+ * @param {Array<string>} following
+ * @returns
+ */
+export function fetchPostsByUserFollowing(following) {
+    return (dispatch, getState) => {
+        following.forEach((uid) => {
+            dispatch(fetchPostsByUserId(uid))
         })
-        .catch((error) => console.error(error))
-} */
+        console.log(getState())
+    }
+}
 
-export function fetchUsersData(uid) {
+export function fetchUserData(uid) {
     return (dispatch, getState) => {
         const isFound = getState().usersState.users.some((el) => el.uid === uid)
         if (!isFound) {
-            firebase
-                .firestore()
-                .collection('users')
-                .doc(uid)
-                .get()
-                .then((snapshot) => {
-                    if (snapshot.exists) {
+            ;(async () => {
+                const user = await getUserById(uid).then((snapshot) => {
+                    if (user) {
                         dispatch({
                             type: USERS_DATA_STATE_CHANGE,
                             user: { ...snapshot.data(), uid: snapshot.uid },
                         })
-                        dispatch(fetchUsersFollowingPosts(uid))
                         console.log(getState())
                     } else {
                         console.log('does not exist')
                     }
                 })
+            })()
         }
-    }
-}
-
-export function fetchUsersFollowingPosts(uid) {
-    return (dispatch, getState) => {
-        firebase
-            .firestore()
-            .collection('post')
-            .doc(uid)
-            .collection('posts')
-            .orderBy('creation', 'asc')
-            .get()
-            .then((snapshot) => {
-                // const uid = snapshot.query.EP.path.segments[1]
-                const user = getState().usersState.users.find((el) => el.uid === uid)
-
-                let posts = snapshot.docs.map((doc) => {
-                    const data = doc.data()
-                    const id = doc.id
-                    return { id, ...data, user }
-                })
-
-                dispatch({ type: USERS_POSTS_STATE_CHANGE, posts, uid })
-            })
     }
 }

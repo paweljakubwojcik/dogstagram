@@ -3,22 +3,27 @@ import { View, Text } from 'react-native'
 import { Container } from '../styles/commonStyles'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchUsersData } from '../../redux/actions'
+import { fetchPostsByUserFollowing, fetchUsersData } from '../../redux/actions'
 
 export default function Feed() {
     const dispatch = useDispatch()
-    const { users } = useSelector((store) => ({
-        posts: store.usersState.feed,
-        users: store.userState.following,
-    }))
+    const { posts, following } = useSelector((store) => {
+        const following = store.usersState.currentUser.following
+        const posts = store.postState.posts.filter(
+            (post) =>
+                following.includes(post.owner) || post.owner === store.usersState.currentUser.uid
+        )
+        return {
+            posts,
+            following,
+        }
+    })
 
-    console.log(users)
+    console.log({ posts })
 
     useEffect(() => {
-        users.forEach((user) => {
-            dispatch(fetchUsersData(user))
-        })
-    }, [])
+        dispatch(fetchPostsByUserFollowing(following))
+    }, [following])
 
     return (
         <Container>

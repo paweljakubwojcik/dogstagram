@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchUser } from '../redux/actions/index'
+import { fetchCurrentUser } from '../redux/actions/index'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -51,11 +51,11 @@ const routes = [
 export default function Main() {
     const dispatch = useDispatch()
     const { currentUser } = useSelector((store) => ({
-        currentUser: store.userState.currentUser,
+        currentUser: store.usersState.currentUser,
     }))
 
     useEffect(() => {
-        fetchUser(dispatch)
+        dispatch(fetchCurrentUser())
     }, [])
 
     return (
@@ -88,10 +88,7 @@ const InnerStack = ({ component, name, children, ...rest }) => {
             >
                 {(props) => <Component {...props} {...rest} />}
             </Stack.Screen>
-            <Stack.Screen
-                name="Profile"
-                options={{ cardStyleInterpolator: forSlide }}
-            >
+            <Stack.Screen name="Profile" options={{ cardStyleInterpolator: forSlide }}>
                 {({ route: { params: { uid } = {} } = {} }) => <Profile uid={uid} />}
             </Stack.Screen>
         </Stack.Navigator>

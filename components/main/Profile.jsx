@@ -5,32 +5,25 @@ import { Container } from '../styles/commonStyles'
 import Button from '../general/Button'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchPostsByUserId, fetchUserPosts } from '../../redux/actions/index'
-import {
-    followUser,
-    getUserById,
-    getUserPosts,
-    logout,
-    unFollowUser,
-} from '../../services/firebase'
+import { fetchPostsByUserId, fetchUserData, fetchUserPosts } from '../../redux/actions/index'
+import { followUser, logout, unFollowUser } from '../../services/firebase'
 
 export default function Profile({ uid }) {
     const dispatch = useDispatch()
 
-    const { isFollowing, isCurrentUser, posts } = useSelector((store) => ({
-        isFollowing: store.userState.following.includes(uid),
-        isCurrentUser: uid === store.userState.currentUser.uid,
-        posts: store.posts.filter((post) => post.owner === uid),
-    }))
-
-    const [user, setUser] = useState(null)
+    const { isFollowing, isCurrentUser, posts, user } = useSelector((store) => {
+        const isCurrentUser = uid === store.usersState.currentUser.uid
+        return {
+            isFollowing: store.usersState.currentUser.following.includes(uid),
+            isCurrentUser,
+            posts: store.postState.posts.filter((post) => post.owner === uid),
+            user: isCurrentUser ? store.usersState.currentUser : store.usersState.users[uid],
+        }
+    })
 
     useEffect(() => {
-        if (!user || user?.uid !== uid) {
-            ;(async () => {
-                const user = await getUserById(uid)
-                setUser(user)
-            })()
+        if (!user) {
+            dispatch(fetchUserData(uid))
         }
         dispatch(fetchPostsByUserId(uid))
     }, [uid])
@@ -59,7 +52,7 @@ export default function Profile({ uid }) {
     return (
         <>
             <UserInfoContainer>
-                <Text>{user?.name}</Text>
+                <Text>{user?.fullName}</Text>
                 {!isCurrentUser ? (
                     isFollowing ? (
                         <Button onPress={onUnfollow}>Following</Button>
