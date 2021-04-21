@@ -50,29 +50,30 @@ export function fetchPostsByUserId(uid) {
  */
 export function fetchPostsByUserFollowing(following) {
     return (dispatch, getState) => {
-        following.forEach((uid) => {
-            dispatch(fetchPostsByUserId(uid))
-        })
-        console.log(getState())
+        if (following)
+            following.forEach((uid) => {
+                dispatch(fetchPostsByUserId(uid))
+            })
+        //console.log(getState())
     }
 }
 
 export function fetchUserData(uid) {
     return (dispatch, getState) => {
-        const isFound = getState().usersState.users.some((el) => el.uid === uid)
+        const isFound = !!getState().usersState.users[uid]
         if (!isFound) {
             ;(async () => {
-                const user = await getUserById(uid).then((snapshot) => {
-                    if (user) {
-                        dispatch({
-                            type: USERS_DATA_STATE_CHANGE,
-                            user: { ...snapshot.data(), uid: snapshot.uid },
-                        })
-                        console.log(getState())
-                    } else {
-                        console.log('does not exist')
-                    }
-                })
+                const user = await getUserById(uid)
+                console.log(user)
+                if (user) {
+                    dispatch({
+                        type: USERS_DATA_STATE_CHANGE,
+                        payload: { user },
+                    })
+                    // console.log(getState())
+                } else {
+                    console.log('does not exist')
+                }
             })()
         }
     }

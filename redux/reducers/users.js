@@ -22,7 +22,10 @@ export const users = (state = initialState, action) => {
             if (action.payload.uid === state.currentUser.uid)
                 return {
                     ...state,
-                    currentUser: { ...state.currentUser, following: action.payload.following },
+                    currentUser: {
+                        ...state.currentUser,
+                        following: action.payload.following || [],
+                    },
                 }
             // probably wont be used but anyway ;)
             else
@@ -34,9 +37,10 @@ export const users = (state = initialState, action) => {
                     },
                 }
         case USERS_DATA_STATE_CHANGE:
+            console.log(action)
             return {
                 ...state,
-                users: { ...state.users, [action.user.uid]: action.user },
+                users: { ...state.users, [action.payload.user.uid]: action.payload.user },
             }
         default:
             return state

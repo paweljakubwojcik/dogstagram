@@ -7,13 +7,7 @@ import { Container } from '../styles/commonStyles'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Button from '../general/Button'
 
-import firebase from 'firebase/app'
-import 'firebase/firebase-firestore'
-import 'firebase/firebase-storage'
-
-const firestore = firebase.firestore()
-const storage = firebase.storage()
-const { STATE_CHANGED } = firebase.storage.TaskEvent
+import { useUploadImage } from '../../services/firebase'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -28,46 +22,17 @@ export default function ImagePreview({
 
     const [caption, setCaption] = useState('')
 
-    const uploadImage = async () => {
-        // getting the data from the image
-        console.log('upload')
-        try {
-            const response = await fetch(image)
-            const blob = await response.blob()
-            const path = `post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`
-            const task = storage.ref().child(path).put(blob)
+    const { uploadImage } = useUploadImage()
 
-            const next = (snapshot) => console.log(`trasferred: ${snapshot.bytesTransferred}`)
-
-            const complete = () => {
-                task.snapshot.ref.getDownloadURL().then((url) => {
-                    savePostData(url)
-                })
-            }
-
-            const error = (snapshot) => {
-                console.log(snapshot)
-            }
-
-            task.on(STATE_CHANGED, { next, error, complete })
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const savePostData = (URL) => {
-        firestore
-            .collection('post')
-            .doc(firebase.auth().currentUser.uid)
-            .collection('posts')
-            .add({
-                URL,
+    const onUpload = () => {
+        uploadImage(image, {
+            additionalFields: {
                 caption,
-                creation: firebase.firestore.FieldValue.serverTimestamp(),
-            })
-            .then(() => {
+            },
+            onComplete: () => {
                 navigation.navigate('Dashboard', { screen: 'Main' })
-            })
+            },
+        })
     }
 
     const imageOffset = -imagePosition
@@ -107,7 +72,7 @@ export default function ImagePreview({
                 placeholder={' add description ...'}
                 onChangeText={(caption) => setCaption(caption)}
             />
-            <Button onPress={() => uploadImage()}>Upload</Button>
+            <Button onPress={() => onUpload()}>Upload</Button>
         </Container>
     )
 }

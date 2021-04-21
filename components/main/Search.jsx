@@ -1,33 +1,18 @@
 import React, { useState } from 'react'
 import styled from 'styled-components/native'
 import { View, Text, TextInput } from 'react-native'
+import { searchUsersByName } from '../../services/firebase'
 
-import firebase from 'firebase/app'
-import 'firebase/firebase-firestore'
 import { FlatList } from 'react-native-gesture-handler'
 
 export default function Search({ navigation }) {
     const [users, setUsers] = useState([])
 
     const searchUsers = async (search) => {
-        if (search)
-            try {
-                const snapshot = await firebase
-                    .firestore()
-                    .collection('users')
-                    .where('name', '>=', search)
-                    .get()
-                const users = snapshot.docs.map((doc) => {
-                    const data = doc.data()
-                    const id = doc.id
-                    return { ...data, id }
-                })
-                console.log(users)
-                setUsers(users)
-            } catch (error) {
-                throw error
-            }
-        else setUsers([])
+        if (search) {
+            const found = await searchUsersByName(search)
+            setUsers(found)
+        } else setUsers([])
     }
 
     return (
@@ -43,7 +28,7 @@ export default function Search({ navigation }) {
                             navigation.navigate('Profile', { uid: item.id, name: item.name })
                         }
                     >
-                        <Text>{item.name}</Text>
+                        <Text>{item.username}</Text>
                     </UserLink>
                 )}
             />

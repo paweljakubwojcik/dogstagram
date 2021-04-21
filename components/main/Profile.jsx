@@ -13,6 +13,7 @@ export default function Profile({ uid }) {
 
     const { isFollowing, isCurrentUser, posts, user } = useSelector((store) => {
         const isCurrentUser = uid === store.usersState.currentUser.uid
+        console.log(store)
         return {
             isFollowing: store.usersState.currentUser.following.includes(uid),
             isCurrentUser,
@@ -52,7 +53,7 @@ export default function Profile({ uid }) {
     return (
         <>
             <UserInfoContainer>
-                <Text>{user?.fullName}</Text>
+                <Text>{user?.fullName || user?.username}</Text>
                 {!isCurrentUser ? (
                     isFollowing ? (
                         <Button onPress={onUnfollow}>Following</Button>
@@ -73,7 +74,6 @@ export default function Profile({ uid }) {
                     data={posts}
                     renderItem={({ item }) => (
                         <ImageTile>
-                            <Text>{item.URL}</Text>
                             <Image
                                 style={{
                                     flex: 1,

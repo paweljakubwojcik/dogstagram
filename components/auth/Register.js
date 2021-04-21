@@ -1,26 +1,15 @@
 import React, { useContext } from 'react'
-import { FirebaseContext } from '../../util/context/firebaseContext'
 
 import { View, TextInput } from 'react-native'
+import { registerUser } from '../../services/firebase'
 import { useForm } from '../../util/hooks/useForm'
 import Button from '../general/Button'
 import { Container } from '../styles/commonStyles'
 
 export default function Register() {
-    const { auth, firestore } = useContext(FirebaseContext)
     const { addValue, onSubmit } = useForm((values) => {
         const { email, password, name } = values
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((res) => {
-                firestore.collection('users').doc(auth.currentUser.uid).set({
-                    username: name,
-                    emailAddress: email,
-                })
-                console.log(res)
-            })
-            .catch((e) => {
-                console.log(e)
-            })
+        registerUser({ email, password, name })
     })
 
     return (
