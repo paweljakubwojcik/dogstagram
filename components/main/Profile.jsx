@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, FlatList } from 'react-native'
+import { View, Text, Image, FlatList, Dimensions } from 'react-native'
 import styled from 'styled-components/native'
 import { Container } from '../styles/commonStyles'
 import Button from '../general/Button'
@@ -7,6 +7,8 @@ import Button from '../general/Button'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostsByUserId, fetchUserData, fetchUserPosts } from '../../redux/actions/index'
 import { followUser, logout, unFollowUser } from '../../services/firebase'
+
+const width = Dimensions.get('window').width
 
 export default function Profile({ uid }) {
     const dispatch = useDispatch()
@@ -41,8 +43,6 @@ export default function Profile({ uid }) {
         logout()
     }
 
-    console.log({ user, posts })
-
     if (!user)
         return (
             <View>
@@ -66,9 +66,7 @@ export default function Profile({ uid }) {
             </UserInfoContainer>
             <Container>
                 <FlatList
-                    style={{
-                        width: 400,
-                    }}
+                    style={{ width }}
                     numColumns={3}
                     horizontal={false}
                     data={posts}

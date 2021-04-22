@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, FlatList, Image, Dimensions } from 'react-native'
 import { Container } from '../styles/commonStyles'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchPostsByUserFollowing, fetchUsersData } from '../../redux/actions'
+import { fetchPostsByUserFollowing, fetchPostsByUserId, fetchUsersData } from '../../redux/actions'
+import PostTile from '../general/PostTile'
 
-export default function Feed() {
+const width = Dimensions.get('window').width
+
+export default function Feed({ navigation }) {
     const dispatch = useDispatch()
-    const { posts, following } = useSelector((store) => {
-        const following = store.usersState.currentUser.following
+    const { posts, following, uid } = useSelector((store) => {
+        const { uid, following } = store.usersState.currentUser
         const posts = store.postState.posts.filter(
             (post) =>
                 following.includes(post.owner) || post.owner === store.usersState.currentUser.uid
@@ -16,6 +19,7 @@ export default function Feed() {
         return {
             posts,
             following,
+            uid,
         }
     })
 
@@ -23,13 +27,18 @@ export default function Feed() {
 
     useEffect(() => {
         dispatch(fetchPostsByUserFollowing(following))
-    }, [following])
+        if (uid) dispatch(fetchPostsByUserId(uid))
+    }, [following, uid])
 
     return (
         <Container>
-            <View>
-                <Text>Feed</Text>
-            </View>
+            <FlatList
+                style={{ width }}
+                numColumns={1}
+                horizontal={false}
+                data={posts}
+                renderItem={({ item }) => <PostTile post={item} navigation={navigation} />}
+            />
         </Container>
     )
 }

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/firebase-auth'
-import { StatusBar, Text } from 'react-native'
+import { StatusBar, Text, View } from 'react-native'
 
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'

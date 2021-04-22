@@ -71,19 +71,25 @@ export const getUserPosts = async (uid) => {
     const timestampNow = firebase.firestore.FieldValue.serverTimestamp()
     const timestampWeekEarlier = dayjs(timestampNow).subtract(7, 'day').valueOf()
 
-    const snapshot = await Firestore.collection('users')
-        .doc(uid)
-        .collection('posts')
-        /* .where('dateCreated', '<=', timestampNow)
+    try {
+        const { username, photoURL } = await getUserById(uid)
+
+        const snapshot = await Firestore.collection('users')
+            .doc(uid)
+            .collection('posts')
+            /* .where('dateCreated', '<=', timestampNow)
         .where('dateCreated', '>', timestampWeekEarlier)
         .orderBy('dateCreated', 'desc') */
-        .get()
+            .get()
 
-    return snapshot.docs.map((doc) => {
-        const data = doc.data()
-        const id = doc.id
-        return { ...data, id, owner: uid }
-    })
+        return snapshot.docs.map((doc) => {
+            const data = doc.data()
+            const id = doc.id
+            return { ...data, id, owner: uid, username }
+        })
+    } catch (error) {
+        throw error
+    }
 }
 
 /**
