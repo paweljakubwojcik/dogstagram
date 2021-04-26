@@ -11,9 +11,12 @@ export const Container = styled.View`
 
 export const PaddingVertical = 15
 
-
 export const FlexColumnContainer = styled.View`
     display: flex;
     justify-content: center;
     align-items: center;
+`
+
+export const BoldText = styled.Text`
+    font-weight: bold;
 `

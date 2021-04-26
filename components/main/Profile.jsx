@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Image, FlatList, Dimensions } from 'react-native'
 import styled from 'styled-components/native'
-import { Container, FlexColumnContainer } from '../styles/commonStyles'
+import { BoldText, Container, FlexColumnContainer } from '../styles/commonStyles'
 import Button from '../general/Button'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -54,27 +54,29 @@ export default function Profile({ uid }) {
     return (
         <>
             <UserInfoContainer>
-                <FlexRowContainer style={{ width: '100%' }}>
+                <FlexRowContainer style={{ width: '100%', marginVertical: 10 }}>
                     <Avatar size={92} style={{ marginRight: 'auto' }} />
                     <Counter>
-                        <BoldText>{user.followingCount}</BoldText>
+                        <CounterText>{user.followingCount}</CounterText>
                         <Text>Following</Text>
                     </Counter>
                     <Counter>
-                        <BoldText>{user.followersCount}</BoldText>
+                        <CounterText>{user.followersCount}</CounterText>
                         <Text>Followers</Text>
                     </Counter>
                 </FlexRowContainer>
-                <Text>{user?.fullName || user?.username}</Text>
-                {!isCurrentUser ? (
-                    isFollowing ? (
-                        <Button onPress={onUnfollow}>Following</Button>
+                <View style={{ width: '100%' }}>
+                    <BoldText>{user?.fullName || user?.username}</BoldText>
+                    {!isCurrentUser ? (
+                        isFollowing ? (
+                            <Button onPress={onUnfollow}>Following</Button>
+                        ) : (
+                            <Button onPress={onFollow}>Follow</Button>
+                        )
                     ) : (
-                        <Button onPress={onFollow}>Follow</Button>
-                    )
-                ) : (
-                    <Button onPress={onLogout}>logout</Button>
-                )}
+                        <Button onPress={onLogout}>logout</Button>
+                    )}
+                </View>
             </UserInfoContainer>
             <Container>
                 <FlatList
@@ -119,8 +121,7 @@ const Counter = styled(FlexColumnContainer)`
     margin: 10px;
 `
 
-const BoldText = styled.Text`
-    font-weight: bold;
+const CounterText = styled(BoldText)`
     font-size: 18px;
 `
 
