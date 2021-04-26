@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
-import { View, Text, FlatList, Image, Dimensions } from 'react-native'
+import { FlatList, Dimensions, Text, View, Image } from 'react-native'
 import { Container } from '../styles/commonStyles'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostsByUserFollowing, fetchPostsByUserId, fetchUsersData } from '../../redux/actions'
 import PostTile from '../general/PostTile'
+import Header from '../general/Header'
+import logo from '../../assets/Dogstagram_logo.png'
 
 const width = Dimensions.get('window').width
 
@@ -32,6 +34,16 @@ export default function Feed({ navigation }) {
 
     return (
         <Container>
+            <Header>
+                <Image
+                    source={logo}
+                    style={{
+                        resizeMode: 'contain',
+                        width: 120,
+                        height: '100%',
+                    }}
+                />
+            </Header>
             <FlatList
                 style={{ width }}
                 numColumns={1}
