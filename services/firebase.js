@@ -53,8 +53,15 @@ export const getCurrentUser = async () => {
  */
 export const getUserById = async (uid) => {
     const snapshot = await Firestore.collection('users').doc(uid).get()
+    const followingCount = (
+        await Firestore.collection('users').doc(uid).collection('following').get()
+    ).docs.length
+    const followersCount = (
+        await Firestore.collection('users').doc(uid).collection('followers').get()
+    ).docs.length
+
     if (snapshot.exists) {
-        return { ...snapshot.data(), uid }
+        return { ...snapshot.data(), uid, followingCount, followersCount }
     } else {
         console.log('does not exist')
         throw new Error(`user ${uid} does not exist`)

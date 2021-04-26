@@ -9,4 +9,11 @@ export const Container = styled.View`
     width: 100%;
 `
 
+export const PaddingVertical = 15
 
+
+export const FlexColumnContainer = styled.View`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`

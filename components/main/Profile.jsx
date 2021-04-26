@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Image, FlatList, Dimensions } from 'react-native'
 import styled from 'styled-components/native'
-import { Container } from '../styles/commonStyles'
+import { Container, FlexColumnContainer } from '../styles/commonStyles'
 import Button from '../general/Button'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostsByUserId, fetchUserData, fetchUserPosts } from '../../redux/actions/index'
 import { followUser, logout, unFollowUser } from '../../services/firebase'
+import Avatar from '../general/Avatar'
 
 const width = Dimensions.get('window').width
 
@@ -53,6 +54,17 @@ export default function Profile({ uid }) {
     return (
         <>
             <UserInfoContainer>
+                <FlexRowContainer style={{ width: '100%' }}>
+                    <Avatar size={92} style={{ marginRight: 'auto' }} />
+                    <Counter>
+                        <BoldText>{user.followingCount}</BoldText>
+                        <Text>Following</Text>
+                    </Counter>
+                    <Counter>
+                        <BoldText>{user.followersCount}</BoldText>
+                        <Text>Followers</Text>
+                    </Counter>
+                </FlexRowContainer>
                 <Text>{user?.fullName || user?.username}</Text>
                 {!isCurrentUser ? (
                     isFollowing ? (
@@ -92,7 +104,24 @@ const UserInfoContainer = styled.View`
     justify-content: center;
     align-items: center;
 
+    padding: 15px;
+
     height: 200px;
+`
+
+const FlexRowContainer = styled.View`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+`
+const Counter = styled(FlexColumnContainer)`
+    margin: 10px;
+`
+
+const BoldText = styled.Text`
+    font-weight: bold;
+    font-size: 18px;
 `
 
 const ImageTile = styled.View`

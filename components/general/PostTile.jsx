@@ -12,21 +12,29 @@ import {
 } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Feather from 'react-native-vector-icons/Feather'
+import Avatar from './Avatar'
 
 const iconsLiked = 'heart'
 const iconsNotLiked = 'heart-outline'
 
-const buttons = [{ name: 'heart', action: () => {} }, { name: 'message-circle' }, { name: 'send' }]
+const buttons = [
+    { name: 'heart', action: () => {} },
+    { name: 'message-circle', action: () => {} },
+    { name: 'send', action: () => {} },
+]
 
 export default function PostTile({ post, navigation, ...rest }) {
     const { username, URL, caption, owner } = post
     return (
         <Container>
             <Title>
+                <Avatar />
                 <TouchableWithoutFeedback
                     onPress={() => navigation.navigate('Profile', { uid: owner, name: username })}
                 >
-                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{username}</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginHorizontal: 12 }}>
+                        {username}
+                    </Text>
                 </TouchableWithoutFeedback>
             </Title>
             <Image
@@ -56,7 +64,9 @@ export default function PostTile({ post, navigation, ...rest }) {
 
 const Title = styled.View`
     display: flex;
-    padding: 16px 12px;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 12px;
 `
 
 const Container = styled.View`
